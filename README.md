@@ -94,6 +94,14 @@ Build the webcam demo (OpenCV required) :
 make cam
 ```
 
+UPDATING
+
+A git repository is provided with the archive. You can update by typing
+```
+git pull
+```
+from the overfeat directory.
+
 HIGH LEVEL INTERFACE:
 ---------------------
 
