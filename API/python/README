@@ -1,0 +1,18 @@
+INSTALL:
+	python setup.py install
+
+USAGE:
+	The following functions are available. See the main README, in the C++ API
+	section, for their meaning :
+		 - init
+		 - free
+		 - fprop
+		 - get_n_layers
+		 - get_output
+		 - get_class_name
+
+	All these functions use numpy.ndarray, with dtype=numpy.float32.
+	Please remember overfeat puts the channels first, meaning that the
+	expected input in fprop should have size 3xHxW (RGB image of size HxW),
+	although numpy loads images with size HxWx3, so it must be transposed.
+	See sample.py for an example.

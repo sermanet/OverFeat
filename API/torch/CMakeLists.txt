@@ -1,0 +1,18 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+CMAKE_POLICY(VERSION 2.6)
+FIND_PACKAGE(Torch REQUIRED)
+
+IF (OPENMP_FOUND)
+  MESSAGE (STATUS "OpenMP Found with compiler flag : ${OpenMP_C_FLAGS}")
+  SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+ENDIF (OPENMP_FOUND)
+
+GET_FILENAME_COMPONENT(OVERFEAT_ROOT0 "../.." ABSOLUTE)
+SET(OVERFEAT_ROOT ${OVERFEAT_ROOT0} CACHE FILEPATH "Path to overfeat directory")
+
+INCLUDE_DIRECTORIES(${OVERFEAT_ROOT})
+SET(src overfeat_torch.cpp)
+
+FILE(GLOB luasrc *.lua)
+ADD_TORCH_PACKAGE(overfeat_torch "${src}" "${luasrc}" "Overfeat" "Torch bindings for overfeat")
+TARGET_LINK_LIBRARIES(overfeat_torch luaT TH ${OVERFEAT_ROOT}/liboverfeat.a)

@@ -1,0 +1,36 @@
+REQUIREMENTS:
+
+torch
+overfeat
+ccmake
+
+INSTALLATION:
+
+mkdir build
+cd build
+ccmake ..
+
+Please set the variable OVERFEAT_ROOT to a folder containing liboverfeat.a
+And check the variables CMAKE_INSTALL_PREFIX and Torch_DIR
+Generate and run :
+
+make
+make install
+
+For some reason, sometimes torch doesn't install liboverfeat_torch.so at
+the right path. If torch cannot find this file, you can simply copy it
+from the build directory to ${Torch_DIR}/lib/torch/lua (or to your
+working directory).
+
+USAGE:
+
+In torch, import overfeat with
+require 'overfeat_torch'
+
+Then you have the same function as in C++ (see overfeat README) :
+- init(path_to_weight_file)
+- free()
+- fprop(input [,output])   output can be passed to avoid reallocating
+- get_output(i [, output])
+- get_n_layers()
+- get_class_name(i)
