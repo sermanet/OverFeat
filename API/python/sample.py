@@ -13,8 +13,8 @@ d0 = float(min(h0, w0))
 h1 = int(round(231*h0/d0))
 w1 = int(round(231*w0/d0))
 image = imresize(image, (h1, w1)).astype(numpy.float32)
-image = image[int(round((d0-h0)/2.)):int(round((d0-h0)/2.)+231),
-              int(round((d0-w0)/2.)):int(round((d0-w0)/2.)+231), :]
+image = image[int(round((h0-d0)/2.)):int(round((h0-d0)/2.)+231),
+              int(round((w0-d0)/2.)):int(round((w0-d0)/2.)+231), :]
 
 # numpy loads image with colors as last dimension, transpose tensor
 h = image.shape[0]
