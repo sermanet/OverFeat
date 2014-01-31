@@ -2,8 +2,8 @@ from distutils.core import setup, Extension
 import numpy
 
 module1 = Extension("overfeat",
-                    include_dirs = ['../..', numpy.get_include()],
-                    library_dirs = ['../..'],
+                    include_dirs = ['../../src', numpy.get_include()],
+                    library_dirs = ['../../src'],
                     libraries = ['TH', 'overfeat'],
                     sources = ['overfeatmodule.cpp'])
 
