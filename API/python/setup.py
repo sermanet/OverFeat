@@ -11,4 +11,4 @@ setup(name = 'overfeat',
       version = '1.0',
       description = 'Python bindings for overfeat',
       ext_modules = [module1],
-      install_requires = ['numpy'])
+      install_requires = ['numpy','scipy'])
