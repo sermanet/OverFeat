@@ -75,14 +75,14 @@ overfeat_fprop(PyObject* self, PyObject* args) {
   npy_intp sizes[3] = {0,0,0};
   for (int i = 0; i < output_th->nDimension; ++i)
     sizes[i] = output_th->size[i];
-  
+
   PyArrayObject* output = (PyArrayObject*)PyArray_SimpleNewFromData(output_th->nDimension,
 								    sizes,
 								    NPY_FLOAT,
 								    THTensor_(data)(output_th));
 
   Py_DECREF(input_c);
-  
+
   return PyArray_Return(output);
 }
 
@@ -98,16 +98,16 @@ overfeat_get_output(PyObject* self, PyObject* args) {
   if (!PyArg_ParseTuple(args, "i", &i))
     return NULL;
   THTensor* output_th = overfeat::get_output(i);
-  
+
   npy_intp sizes[3] = {0,0,0};
   for (int i = 0; i < output_th->nDimension; ++i)
     sizes[i] = output_th->size[i];
-  
+
   PyArrayObject* output = (PyArrayObject*)PyArray_SimpleNewFromData(output_th->nDimension,
 								    sizes,
 								    NPY_FLOAT,
 								    THTensor_(data)(output_th));
-  
+
   return PyArray_Return(output);
 }
 
@@ -120,6 +120,42 @@ overfeat_get_class_name(PyObject* self, PyObject* args) {
   return Py_BuildValue("s", class_name.c_str());
 }
 
+static PyObject*
+overfeat_soft_max(PyObject* self, PyObject* args) {
+  PyArrayObject* input = NULL;
+  if (!PyArg_ParseTuple(args, "O", &input))
+    return NULL;
+  if (PyArray_TYPE(input) != FLOAT32_DTYPE) {
+    PyErr_SetString(PyExc_TypeError,
+            "Overfeat: arrays must have type numpy.float32");
+    return NULL;
+  }
+  if (PyArray_NDIM(input) != 3) {
+    PyErr_SetString(PyExc_TypeError,
+            "Overfeat: fprop expect a 3d array");
+    return NULL;
+  }
+
+  PyArrayObject* input_c = PyArray_GETCONTIGUOUS(input);
+  THTensor* input_th = THFromContiguousArray(input_c);
+  int size = input_th->size[0];
+  THTensor_(resize1d)(input_th, size);
+  THTensor* output_th = THTensor_(newWithSize1d)(size);
+  overfeat::soft_max(input_th, output_th);
+  npy_intp sizes[3] = {0,0,0};
+  for (int i = 0; i < output_th->nDimension; ++i)
+    sizes[i] = output_th->size[i];
+
+  PyArrayObject* output = (PyArrayObject*)PyArray_SimpleNewFromData(output_th->nDimension,
+                                    sizes,
+                                    NPY_FLOAT,
+                                    THTensor_(data)(output_th));
+  Py_DECREF(input_c);
+
+  return PyArray_Return(output);
+}
+
+
 static PyMethodDef OverfeatMethods[] = {
   {"init", overfeat_init, METH_VARARGS, "Initializes overfeat"},
   {"free", overfeat_free, METH_VARARGS, "Releases ressources allocated by overfeat"},
@@ -127,6 +163,8 @@ static PyMethodDef OverfeatMethods[] = {
   {"get_n_layers", overfeat_get_n_layers, METH_VARARGS, "Return the number of layers in the network"},
   {"get_output", overfeat_get_output, METH_VARARGS, "Returns the output of the i-th layer"},
   {"get_class_name", overfeat_get_class_name, METH_VARARGS, "Returns the name of the i-th class"},
+  {"soft_max", overfeat_soft_max, METH_VARARGS, "Transform from scores to soft_max"},
+
   {NULL, NULL, 0, NULL}
 };
 

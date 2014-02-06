@@ -7,20 +7,18 @@ from scipy.misc import imresize
 image = imread('../../samples/bee.jpg')
 
 # resize and crop into a 231x231 image
-h0 = image.shape[0]
-w0 = image.shape[1]
+DIM = 231
+h0, w0 = image.shape[:2]
 d0 = float(min(h0, w0))
-h1 = int(round(231*h0/d0))
-w1 = int(round(231*w0/d0))
-d1 = float(min(h1, w1))
+h1 = int(round(DIM*h0/d0))
+w1 = int(round(DIM*w0/d0))
+d1 = DIM
 image = imresize(image, (h1, w1)).astype(numpy.float32)
-image = image[int(round((h1-d1)/2.)):int(round((h1-d1)/2.)+231),
-              int(round((w1-d1)/2.)):int(round((w1-d1)/2.)+231), :]
+image = image[int(round((h1-d1)/2.)):int(round((h1-d1)/2.)+DIM),
+              int(round((w1-d1)/2.)):int(round((w1-d1)/2.)+DIM), :]
 
 # numpy loads image with colors as last dimension, transpose tensor
-h = image.shape[0]
-w = image.shape[1]
-c = image.shape[2]
+h,w,c = image.shape
 image = image.reshape(w*h, c)
 image = image.transpose()
 image = image.reshape(c, h, w)
