@@ -4,7 +4,7 @@ from optparse import OptionParser
 import os, string, subprocess, sys, os.path
 
 file_dir = os.path.dirname(os.path.abspath(__file__))
-if file_dir[-9:] == "bin/linux":
+if (file_dir[-12:] == "bin/linux_32") or (file_dir[-12:] == "bin/linux_64") or (file_dir[-9:] == "bin/macos"):
    overfeat_dir = os.path.join(file_dir, "../..")
 elif file_dir[-3:] == "src":
    overfeat_dir = os.path.join(file_dir, "..")

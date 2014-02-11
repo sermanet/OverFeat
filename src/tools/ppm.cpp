@@ -22,13 +22,13 @@ bool readPPM(FILE* stream, THTensor* output) {
   }
 
   //check for comments
-  /*c = getc(stream);
+  c = getc(stream);
   while (c == '#') {
     while (getc(stream) != '\n') ;
     c = getc(stream);
-    }*/
+  }
 
-    //ungetc(c, stream);
+  ungetc(c, stream);
   //read image size information
   int w, h;
   if (fscanf(stream, "%d %d", &w, &h) != 2) {
