@@ -48,6 +48,8 @@ RUNNING THE PRE-COMPILED BINARIES
 
 Pre-compiled binaries are provided for Ubuntu Linux (32 bits and 64 bits) and Mac OS. The pre-requisites are python and imagemagick, which are installed by default on most popular Linux distros.
 
+**Important note:** OverFeat compiled from source on your computer will run faster than the pre-compiled binaries.
+
 Example of image classification, printing the 6 highest-scoring categories:
 ```
 bin/YOUR_OS/overfeat -n 6 samples/bee.jpg
