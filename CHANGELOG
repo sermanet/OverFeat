@@ -28,3 +28,4 @@ version 3.5:
 version 3.6:
 	- Fix ppm images reading that didn't support comments in the ppm image
 	- Fix wrong paths in overfeat_batch
+	- Fix layer numbers in README

@@ -147,8 +147,8 @@ For instance
 ```
 bin/linux_64/overfeat [-d <path_to_weights>] [-l] -L 12 image1.png
 ```
-returns the output of layer 12. The option -f corresponds to layer 21 for the small layer
-and 24 for the large one.
+returns the output of layer 12. The option -f corresponds to layer 19 for the small layer
+and 22 for the large one.
 
 It writes the features on stdout as a sequence. Each feature starts with three integers
 separated by spaces, the first is the number of features (n),
