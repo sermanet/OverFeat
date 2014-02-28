@@ -1,0 +1,58 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+import os, string, subprocess, sys, os.path
+sys.path.append("..")
+from find_overfeat_dir import findOverfeatDir
+
+file_dir = os.path.dirname(os.path.abspath(__file__))
+overfeat_dir = findOverfeatDir(file_dir)
+default_data_dir = os.path.join(overfeat_dir, "data/default")
+
+parser = OptionParser()
+parser.description = "See README.md for more details"
+parser.add_option("-p", "--ppm", dest="ppm", action ="store_true", default =False, help="Input images are a stream of ppm images, instead of a list of filenames")
+parser.add_option("-n", "--n_top_classes", dest="ntop", action="store", default=5, help="Number of output classes (unused when the outputs are features)")
+parser.add_option("-f", "--features", dest="features", action="store_true", default=False, help="Outputs features instead of classes")
+parser.add_option("-L", "--features-layer", dest="features_layer", action="store", default = None, help="Prints the output of a specitic layer. Overrides -f. The features returned with option -f alone correspond to layer 16")
+parser.add_option("-d", "--data_dir", dest="data_dir", action="store", default=default_data_dir, help="Path to the folder containing the model data")
+parser.add_option("-l", "--large_net", dest="large_net", action="store_true", default=False, help="Use larger but slower network")
+parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print verbose information")
+(options, args) = parser.parse_args()
+
+net_idx = 1 if options.large_net else 0
+
+if not os.path.exists(options.data_dir):
+   if options.data_dir != default_data_dir:
+      print >> sys.stderr, "Specified path to data (%s) does not exist"%(options.data_dir)
+   else:
+      print >> sys.stderr, "Cannot find default path to the model data files (%s).\n Please manually specify it with option -d"%(options.data_dir)
+   sys.exit(0)
+weight_file = os.path.join(options.data_dir, "net_weight_%d"%(net_idx))
+if not os.path.exists(weight_file):
+   print >> sys.stderr, "File %s does not exists. Please check your path, or use option -d"%(weight_file)
+
+if (len(args) < 1) and (not options.ppm):
+   print >> sys.stderr, "Missing input image path (or -p option)"
+   parser.print_help()
+   sys.exit(0)
+
+ntop = int(options.ntop)
+if (options.features_layer != None) or (options.features == True):
+   ntop = -1
+#ldpath = "export LD_LIBRARY_PATH=%s:.:%s/src/torch7-distro/installed/lib/:$LD_LIBRARY_PATH;"%(file_dir, file_dir)
+ldpath=""
+
+featurelayer = 19
+if options.large_net == True:
+   featurelayer = 22
+if options.features_layer != None:
+   featurelayer = int(options.features_layer)
+
+if options.ppm == True:
+   subprocess.call("%s %s/overfeatcmd_cuda %s %d %d %d"%(ldpath, file_dir, weight_file, ntop, net_idx, featurelayer), stdin = sys.stdin, stdout = sys.stdout, shell=True)
+if ntop < 0:
+   os.system("%s convert %s ppm:- | %s/overfeatcmd_cuda %s %d %d %d"%(ldpath, string.join(args, " "), file_dir, weight_file, ntop, net_idx, featurelayer))
+else:
+   os.system("%s convert %s -resize 231x231^ ppm:- | %s/overfeatcmd_cuda %s %d %d %d"%(ldpath, string.join(args, " "), file_dir, weight_file, ntop, net_idx, featurelayer))
+

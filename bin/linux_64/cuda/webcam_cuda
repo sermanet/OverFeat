@@ -1,0 +1,35 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+import os, sys, os.path
+sys.path.append("..")
+from find_overfeat_dir import findOverfeatDir
+
+file_dir = os.path.dirname(os.path.abspath(__file__))
+overfeat_dir = findOverfeatDir(file_dir)
+default_data_dir = os.path.join(overfeat_dir, "data/default")
+
+parser = OptionParser()
+parser.description = "See README.md for more details"
+parser.add_option("-d", "--data_dir", dest="data_dir", action="store", default=default_data_dir, help="Path to the folder containing the model data")
+parser.add_option("-w", "--webcam_idx", dest="webcam_idx", action="store", default=0, help="Index of the webcam")
+parser.add_option("-l", "--large_net", dest="large_net", action="store_true", default=False, help="Use larger but slower network")
+(options, args) = parser.parse_args()
+
+net_idx = 1 if options.large_net else 0
+
+if not os.path.exists(options.data_dir):
+   if options.data_dir != default_data_dir:
+      print >> sys.stderr, "Specified path to data (%s) does not exist"%(options.data_dir)
+   else:
+      print >> sys.stderr, "Cannot find default path to the model data files (%s).\n Please manually specify it with option -d"%(options.data_dir)
+   sys.exit(0)
+weight_file = os.path.join(options.data_dir, "net_weight_%d"%(net_idx))
+if not os.path.exists(weight_file):
+   print >> sys.stderr, "File %s does not exists. Please check your path, or use option -d"%(weight_file)
+
+webcam_idx = int(options.webcam_idx)
+#ldpath = "LD_LIBRARY_PATH=%s:.:%s/src/torch7-distro/installed/lib/:$LD_LIBRARY_PATH;"%(file_dir, file_dir)
+ldpath = ""
+
+os.system("%s %s/webcamcmd_cuda %s %d %d"%(ldpath, file_dir, weight_file, net_idx, webcam_idx))
