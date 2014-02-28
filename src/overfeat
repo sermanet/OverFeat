@@ -2,20 +2,10 @@
 
 from optparse import OptionParser
 import os, string, subprocess, sys, os.path
+from find_overfeat_dir import findOverfeatDir
 
 file_dir = os.path.dirname(os.path.abspath(__file__))
-if (file_dir[-12:] == "bin/linux_32") or (file_dir[-12:] == "bin/linux_64") or (file_dir[-9:] == "bin/macos"):
-   overfeat_dir = os.path.join(file_dir, "../..")
-elif file_dir[-3:] == "src":
-   overfeat_dir = os.path.join(file_dir, "..")
-else:
-   overfeat_dir = file_dir
-try:
-   path_env = os.environ['OVERFEAT_NETDIR']
-   if path_env != "":
-      overfeat_dir = path_env
-except KeyError:
-   pass
+overfeat_dir = findOverfeatDir(file_dir)
 default_data_dir = os.path.join(overfeat_dir, "data/default")
 
 parser = OptionParser()
@@ -49,7 +39,8 @@ if (len(args) < 1) and (not options.ppm):
 ntop = int(options.ntop)
 if (options.features_layer != None) or (options.features == True):
    ntop = -1
-ldpath = "export LD_LIBRARY_PATH=%s:.:%s/src/torch7-distro/installed/lib/:$LD_LIBRARY_PATH"%(file_dir, file_dir)
+#ldpath = "export LD_LIBRARY_PATH=%s:.:%s/src/torch7-distro/installed/lib/:$LD_LIBRARY_PATH;"%(file_dir, file_dir)
+ldpath=""
 
 featurelayer = 19
 if options.large_net == True:
@@ -58,9 +49,9 @@ if options.features_layer != None:
    featurelayer = int(options.features_layer)
 
 if options.ppm == True:
-   subprocess.call("%s; %s/overfeatcmd %s %d %d %d"%(ldpath, file_dir, weight_file, ntop, net_idx, featurelayer), stdin = sys.stdin, stdout = sys.stdout, shell=True)
+   subprocess.call("%s %s/overfeatcmd %s %d %d %d"%(ldpath, file_dir, weight_file, ntop, net_idx, featurelayer), stdin = sys.stdin, stdout = sys.stdout, shell=True)
 if ntop < 0:
-   os.system("%s; convert %s ppm:- | %s/overfeatcmd %s %d %d %d"%(ldpath, string.join(args, " "), file_dir, weight_file, ntop, net_idx, featurelayer))
+   os.system("%s convert %s ppm:- | %s/overfeatcmd %s %d %d %d"%(ldpath, string.join(args, " "), file_dir, weight_file, ntop, net_idx, featurelayer))
 else:
-   os.system("%s; convert %s -resize 231x231^ ppm:- | %s/overfeatcmd %s %d %d %d"%(ldpath, string.join(args, " "), file_dir, weight_file, ntop, net_idx, featurelayer))
+   os.system("%s convert %s -resize 231x231^ ppm:- | %s/overfeatcmd %s %d %d %d"%(ldpath, string.join(args, " "), file_dir, weight_file, ntop, net_idx, featurelayer))
 

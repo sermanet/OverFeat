@@ -22,10 +22,18 @@ version 3.4:
 	- Fixed wrong output layer in overseat with option -f.
 
 version 3.5:
-	- Fix LD_LIBRARY_PATH in overfeat script
-	- Add git repository
+	- Fix LD_LIBRARY_PATH in overfeat script.
+	- Add git repository.
 
 version 3.6:
-	- Fix ppm images reading that didn't support comments in the ppm image
-	- Fix wrong paths in overfeat_batch
-	- Fix layer numbers in README
+	- Fix ppm images reading that didn't support comments in the ppm image.
+	- Fix wrong paths in overfeat_batch.
+	- Fix layer numbers in README.
+
+version 4.0:
+	- Released binaries for GPU (only for linux 64bits for now).
+	- Removed dependency to torch by adding local copy of lib TH.
+	- Replaced dynamic library libTH.so by static library libTH.a.
+	- Fix bug in webcam script.
+	- Fixed ambiguous dependency to openblas : now, linux uses openblas and macos uses Accelerate.
+	- Mac OS should correctly use OpenMP now.

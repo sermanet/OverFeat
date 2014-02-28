@@ -4,11 +4,11 @@
 //#include <opencv/highgui.h>
 #include "overfeat.hpp"
 #include "tools/cv2TH.hpp"
-#include "tools/print_tensor.hpp"
 #include <signal.h>
 using namespace std;
 using namespace cv;
 
+CvFont global_hershey_font;
 
 // This function reads and resizes a frame from the camera, using opencv
 VideoCapture* cam = NULL;
@@ -32,8 +32,9 @@ THTensor* getCameraFrame(int webcamidx, THTensor* output, int w = -1, int h = -1
 // Simple display of a tensor
 void display(const THTensor* todisp, bool wait = false) {
   Mat M = TH2cv_byte(todisp);
-  namedWindow("display");
-  imshow("display", M);
+  cvNamedWindow("display");
+  IplImage Mimg = M;
+  cvShowImage("display", &Mimg);
   cvWaitKey((wait) ? 0 : 1);
 }
 
@@ -51,16 +52,19 @@ void displayWithConf(const THTensor* im, vector<pair<string, float> > classes) {
   char buffer[128];
   for (int i = 0; i < classes.size(); ++i) {
     pair<string, float> & cl = classes[i];
-    putText(M, cl.first, Point2i(w, 20+40*i), FONT_HERSHEY_SIMPLEX, 0.5,
-	    Scalar(255,255,255));
+    IplImage Mimg = M;
+    cvPutText(&Mimg, cl.first.c_str(), Point2i(w, 20+40*i),
+	      &global_hershey_font, cvScalarAll(255));
     sprintf(buffer, "  %f", cl.second);
-    rectangle(M, Point2i(w+10, 30+40*i), Point2i(w+(wextra-20)*cl.second, 40+40*i),
+    rectangle(M, Point2i(w+10, 30+40*i),
+	      Point2i(w+(wextra-20)*cl.second, 40+40*i),
 	      Scalar(0, 64, 0), CV_FILLED);
-    putText(M, buffer, Point2i(w, 40+40*i), FONT_HERSHEY_SIMPLEX, 0.5,
-	    Scalar(255,255,255));
+    cvPutText(&Mimg, buffer, Point2i(w, 40+40*i),
+	      &global_hershey_font, cvScalarAll(255));
   }
-  namedWindow("display");
-  imshow("display", M);
+  cvNamedWindow("display");
+  IplImage Mimg = M;
+  cvShowImage("display", &Mimg);
   cvWaitKey(1);
 }
 
@@ -98,6 +102,8 @@ int main(int argc, char* argv[]) {
   string weight_file_path = argv[1];
   int net_idx = atoi(argv[2]);
   int webcamidx = atoi(argv[3]);
+
+  cvInitFont(&global_hershey_font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, 8);
 
   try {
     

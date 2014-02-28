@@ -15,4 +15,4 @@ SET(src overfeat_torch.cpp)
 
 FILE(GLOB luasrc *.lua)
 ADD_TORCH_PACKAGE(overfeat_torch "${src}" "${luasrc}" "Overfeat" "Torch bindings for overfeat")
-TARGET_LINK_LIBRARIES(overfeat_torch luaT TH ${OVERFEAT_ROOT}/liboverfeat.a)
+TARGET_LINK_LIBRARIES(overfeat_torch luaT TH ${OVERFEAT_ROOT}/src/liboverfeat.a)

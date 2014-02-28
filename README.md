@@ -44,11 +44,34 @@ We provide a script to automatically download the weights :
 ```
 The weight files should be in the folder data/default in the overfeat directory.
 
+Overfeat can run without BLAS, however it would be very slow. We *strongly*
+advice you to install openblas on linux (on MacOS, Accelerate should be available
+without any installation). On Ubuntu/Debian you should compile it (it might take
+a while, but it is worth it) :
+```
+sudo apt-get install build-essential gcc g++ gfortran git libgfortran3
+cd /tmp
+git clone https://github.com/xianyi/OpenBLAS.git
+cd OpenBLAS
+make NO_AFFINITY=1 USE_OPENMP=1
+sudo make install
+```
+For some reason, on 32 bits Ubuntu, libgfortran doesn't create the correct symlink.
+If you have issues linking with libgfortran, locate where libgfortran is installed
+(for instance /usr/lib/i386-linux-gnu) and create the correct symlink :
+```
+cd <folder_containing_libgfortran.so.3>
+sudo ln -sf libgfortran.so.3 libgfortran.so
+```
+The precompiled binaries use BLAS. If you don't want to (or can't, for some reason)
+use BLAS, you must recompile overfeat.
+
 RUNNING THE PRE-COMPILED BINARIES
 
 Pre-compiled binaries are provided for Ubuntu Linux (32 bits and 64 bits) and Mac OS. The pre-requisites are python and imagemagick, which are installed by default on most popular Linux distros.
 
-**Important note:** OverFeat compiled from source on your computer will run faster than the pre-compiled binaries.
+**Important note:** OverFeat compiled from source on your computer will run faster
+than the pre-compiled binaries.
 
 Example of image classification, printing the 6 highest-scoring categories:
 ```
@@ -61,8 +84,23 @@ Running the webcam demo:
 bin/YOUR_OS/webcam
 ```
 
-COMPILING FROM SOURCE
+GPU PRE-COMPILED BINARIES (EXPERIMENTAL)
 
+We are providing precompiled binaries to run overfeat on GPU. Because the code
+is not released yet, we do not provide the source for now. The GPU release is
+experimental and for now only runs on linux 64bits. It requires a Nvidia GPU
+with CUDA architecture >= 2.0 (that covers all recent GPUs from Nvidia).
+
+You will need openblas to run the GPU binaries.
+
+The binaries are located in
+```
+bin/linux_64/cuda
+```
+And work the same way as the CPU versions. You can include the static library the
+same way as the CPU version.
+
+COMPILING FROM SOURCE
 
 Install dependencies : python, imagemagick, git, gcc, cmake (pkg-config and opencv required for the webcam demo).
 On Ubuntu/Debian :
@@ -81,12 +119,7 @@ Go to the src folder :
 cd src
 ```
 
-Install torch (the only part of Torch used by OverFeat is the C tensor library):
-```
-sh install.sh
-```
-
-Build the OverFeat library and command-line tools:
+Build the tensor library (TH), OverFeat and the command-line tools:
 ```
 make all
 ```
@@ -95,6 +128,14 @@ Build the webcam demo (OpenCV required) :
 ```
 make cam
 ```
+
+On Mac OS, the default gcc doesn't support OpenMP. We strongly recommend to install
+a gcc version with OpenMP support. With MacPort :
+```
+sudo port install gcc48
+```
+Which will provide g++-mp-48 . If you don't install this version, you will have to
+change the two corresponding lines in the Makefile.
 
 UPDATING
 

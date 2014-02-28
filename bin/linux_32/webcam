@@ -2,20 +2,10 @@
 
 from optparse import OptionParser
 import os, sys, os.path
+from find_overfeat_dir import findOverfeatDir
 
 file_dir = os.path.dirname(os.path.abspath(__file__))
-if file_dir[-9:] == "bin/linux":
-   overfeat_dir = os.path.join(file_dir, "../..")
-elif file_dir[-3:] == "src":
-   overfeat_dir = os.path.join(file_dir, "..")
-else:
-   overfeat_dir = file_dir
-try:
-   path_env = os.environ['OVERFEAT_NETDIR']
-   if path_env != "":
-      overfeat_dir = path_env
-except KeyError:
-   pass
+overfeat_dir = findOverfeatDir(file_dir)
 default_data_dir = os.path.join(overfeat_dir, "data/default")
 
 parser = OptionParser()
@@ -38,6 +28,7 @@ if not os.path.exists(weight_file):
    print >> sys.stderr, "File %s does not exists. Please check your path, or use option -d"%(weight_file)
 
 webcam_idx = int(options.webcam_idx)
-ldpath = "LD_LIBRARY_PATH=%s:.:%s/src/torch7-distro/installed/lib/:$LD_LIBRARY_PATH"%(file_dir, file_dir)
+#ldpath = "LD_LIBRARY_PATH=%s:.:%s/src/torch7-distro/installed/lib/:$LD_LIBRARY_PATH;"%(file_dir, file_dir)
+ldpath = ""
 
-os.system("%s; %s/webcamcmd %s %d %d"%(ldpath, file_dir, weight_file, net_idx, webcam_idx))
+os.system("%s %s/webcamcmd %s %d %d"%(ldpath, file_dir, weight_file, net_idx, webcam_idx))
