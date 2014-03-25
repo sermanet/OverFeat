@@ -327,7 +327,7 @@ probabilities, this function returns the names of the top `n` classes, along wit
 score/probabilities.
 
 When compiling code using liboverfeat.a, the code must also be linked against
-libTH.so, the tensor library. The file libTH.so will have been produced when
+libTH.a, the tensor library. The file libTH.a will have been produced when
 compiling torch.
 
 

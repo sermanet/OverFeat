@@ -10,11 +10,9 @@ image = imread('../../samples/bee.jpg')
 h0 = image.shape[0]
 w0 = image.shape[1]
 d0 = float(min(h0, w0))
-h1 = int(round(231*h0/d0))
-w1 = int(round(231*w0/d0))
-image = imresize(image, (h1, w1)).astype(numpy.float32)
-image = image[int(round((h0-d0)/2.)):int(round((h0-d0)/2.)+231),
-              int(round((w0-d0)/2.)):int(round((w0-d0)/2.)+231), :]
+image = image[int(round((h0-d0)/2.)):int(round((h0-d0)/2.)+d0),
+              int(round((w0-d0)/2.)):int(round((w0-d0)/2.)+d0), :]
+image = imresize(image, (231, 231)).astype(numpy.float32)
 
 # numpy loads image with colors as last dimension, transpose tensor
 h = image.shape[0]

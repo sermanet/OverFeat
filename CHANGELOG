@@ -37,3 +37,7 @@ version 4.0:
 	- Fix bug in webcam script.
 	- Fixed ambiguous dependency to openblas : now, linux uses openblas and macos uses Accelerate.
 	- Mac OS should correctly use OpenMP now.
+
+version 4.1:
+	- Fix python API
+	- Add missing file for cuda C++ API

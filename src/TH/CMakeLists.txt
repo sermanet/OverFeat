@@ -23,6 +23,8 @@ SET(src
 
 SET(src ${src} ${hdr})
 
+ADD_DEFINITIONS(-fPIC)
+
 IF(UNIX)
   INCLUDE(CheckFunctionExists)
   SET(CMAKE_EXTRA_INCLUDE_FILES "sys/mman.h")
