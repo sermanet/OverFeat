@@ -198,6 +198,8 @@ It is followed by a end of line ('\n') character. Then follows n*h*w floating po
 numbers (written in ascii) separated by spaces. The feature is the first dimension
 (so that to obtain the next feature, you must add w*h to your index), followed by the
 row (to obtain the next row, add w to your index).
+That means that if you want the features corresponding to the top-left window, you need
+to read pixels i*h*w for i=0..4095 .
 
 The output is going to be a 3D tensor. The first dimension correspond to the features,
 while dimensions 2 and 3 are spatial (y and x respectively).
