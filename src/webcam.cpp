@@ -23,8 +23,13 @@ THTensor* getCameraFrame(int webcamidx, THTensor* output, int w = -1, int h = -1
   cam->grab();
   // get up to date image
   cam->read(im);
-  if (w == -1) w = im.size().width;
-  if (h == -1) h = im.size().height;
+  int cam_w = im.size().width;
+  int cam_h = im.size().height;
+  if (w == -1) w = cam_w;
+  if (h == -1) h = cam_h;
+  // crop a square from the webcam
+  Rect myROI(cam_w/2 - cam_h/2, 0, cam_h, cam_h);
+  im = im(myROI);
   resize(im, getCameraFrame_tmp, Size(w, h), 0, 0, INTER_CUBIC);
   cv2TH(getCameraFrame_tmp, output);
 }
